@@ -12,11 +12,12 @@ pudb = "*"
 pytest = "*"
 pytest-mock = "*"
 pytest-selenium = "*"
+colorama = "*"
 
 [packages]
 dynaconf = { extras = ["yaml"], version = "*" }
 gunicorn = "*"
-psycopg2-binary = "*"
+#psycopg2-binary = "*"
 
 [requires]
-python_version = "3.8"
+python_version = "3.9"
