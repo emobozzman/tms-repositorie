@@ -16,7 +16,7 @@ def test(browser, request):
 
 
 def validate_title(page: MainPage):
-    assert "emobozzman" in page.title
+    assert "emobozzman is my name" in page.title
 
 
 def validate_content(page: MainPage):
