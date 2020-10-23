@@ -27,4 +27,3 @@ def read_static(file_name: str) -> bytes:
         payload = fp.read()
 
     return payload
-
