@@ -5,40 +5,22 @@ from framework.consts import DIR_STATIC
 
 def application(environ, start_response):
     url = environ["PATH_INFO"]
-    if url == "/xxx/":
-        status = "200 OK"
-        text_html_content_type = mimetypes.guess_type("text.css")
-        headers = {
-            "Content-type": text_html_content_type[0],
-        }
-        payload = read_from_styles_css()
-        start_response(status, list(headers.items()))
 
-        yield payload
+    file_names = {
+        "/xxx/": "styles.css",
+        "/logo.png/": "logo.png"
+    }
+    file_name = file_names.get(url, "index.html")
+    status = "200 OK"
+    headers = {
+        "Content-type": mimetypes.guess_type(file_name)[0],
+    }
 
-    elif url == "/logo.png/":
-        status = "200 OK"
-        logo_content_type = mimetypes.guess_type("logo.png")
-        headers = {
-            "Content-type": logo_content_type[0],
-        }
-        payload = read_from_logo_png()
-        start_response(status, list(headers.items()))
+    payload = read_static(file_name)
 
-        yield payload
+    start_response(status, list(headers.items()))
 
-    else:
-        status = "200 OK"
-        text_html_content_type = mimetypes.guess_type("text.html")
-        headers = {
-            "Content-type": text_html_content_type[0],
-        }
-
-        payload = read_from_index_html()
-
-        start_response(status, list(headers.items()))
-
-        yield payload
+    yield payload
 
 
 def read_from_index_html():
@@ -63,6 +45,15 @@ def read_from_styles_css():
 
 def read_from_logo_png():
     path = DIR_STATIC / "logo.png"
+
+    with path.open("rb") as fp:
+        payload = fp.read()
+
+    return payload
+
+
+def read_static(file_name: str) -> bytes:
+    path = DIR_STATIC / file_name
 
     with path.open("rb") as fp:
         payload = fp.read()
