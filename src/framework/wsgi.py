@@ -20,35 +20,6 @@ def application(environ, start_response):
     yield payload
 
 
-def read_from_index_html():
-    path = DIR_STATIC / "index.html"
-
-    with path.open("r") as fp:
-        payload = fp.read()
-
-    payload = payload.encode()
-    return payload
-
-
-def read_from_styles_css():
-    path = DIR_STATIC / "styles.css"
-
-    with path.open("r") as fp:
-        payload = fp.read()
-
-    payload = payload.encode()
-    return payload
-
-
-def read_from_logo_png():
-    path = DIR_STATIC / "logo.png"
-
-    with path.open("rb") as fp:
-        payload = fp.read()
-
-    return payload
-
-
 def read_static(file_name: str) -> bytes:
     path = DIR_STATIC / file_name
 
