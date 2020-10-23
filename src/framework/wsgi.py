@@ -6,10 +6,7 @@ from framework.consts import DIR_STATIC
 def application(environ, start_response):
     url = environ["PATH_INFO"]
 
-    file_names = {
-        "/xxx/": "styles.css",
-        "/logo.png/": "logo.png"
-    }
+    file_names = {"/xxx/": "styles.css", "/logo.png/": "logo.png"}
     file_name = file_names.get(url, "index.html")
     status = "200 OK"
     headers = {
