@@ -12,7 +12,7 @@ def run():
         try:
             httpd.serve_forever()
         except KeyboardInterrupt:
-            print('\n! stopping server\n')
+            print("\n! stopping server\n")
         finally:
             httpd.shutdown()
             print("\n--- server has been shut down ---\n\n")
