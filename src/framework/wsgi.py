@@ -18,7 +18,7 @@ def application(environ, start_response):
 
     handlers = {
         "/": handle_index,
-        "/logo.png/": handle_logo,
+        "/hgfhgf": handle_logo,
     }
     handler = handlers.get(url, generate_404)
 
