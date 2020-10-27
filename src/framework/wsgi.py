@@ -7,7 +7,11 @@ from framework.consts import DIR_STATIC
 def handle_index(dgdfgdf):
     gfdg = read_static("index.html")
     return gfdg
-def handle_logo(ddddqd):...
+
+
+def handle_logo(ddddqd):
+    ...
+
 
 def application(environ, start_response):
     url = environ["PATH_INFO"]
@@ -27,7 +31,6 @@ def application(environ, start_response):
     start_response(status, list(headers.items()))
 
     yield payload
-
 
 
 def read_static(file_name: str) -> bytes:
