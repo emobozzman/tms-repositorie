@@ -1,23 +1,33 @@
 import mimetypes
+import random
 
 from framework.consts import DIR_STATIC
 
 
+def handle_index(dgdfgdf):
+    gfdg = read_static("index.html")
+    return gfdg
+def handle_logo(ddddqd):...
+
 def application(environ, start_response):
     url = environ["PATH_INFO"]
 
-    file_names = {"/xxx/": "styles.css", "/logo.png/": "logo.png"}
-    file_name = file_names.get(url, "index.html")
+    handlers = {
+        "/": handle_index,
+        "/hgfhgf": handle_logo,
+    }
+    hendler = handlers.get(url, generate_404)
+
     status = "200 OK"
     headers = {
-        "Content-type": mimetypes.guess_type(file_name)[0],
+        "Content-type": "text/html",
     }
 
-    payload = read_static(file_name)
-
+    payload = hendler(environ)
     start_response(status, list(headers.items()))
 
     yield payload
+
 
 
 def read_static(file_name: str) -> bytes:
@@ -27,3 +37,12 @@ def read_static(file_name: str) -> bytes:
         payload = fp.read()
 
     return payload
+
+
+def generate_404(environ) -> bytes:
+    url = environ["PATH_INFO"]
+    pin = random.randint(1, 1000)
+
+    msg = f"Hello world! Your path: {url} not found. Pin: {pin}"
+
+    return msg.encode()
