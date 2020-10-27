@@ -18,16 +18,16 @@ def application(environ, start_response):
 
     handlers = {
         "/": handle_index,
-        "/hgfhgf": handle_logo,
+        "/logo.png/": handle_logo,
     }
-    hendler = handlers.get(url, generate_404)
+    handler = handlers.get(url, generate_404)
 
     status = "200 OK"
     headers = {
         "Content-type": "text/html",
     }
 
-    payload = hendler(environ)
+    payload = handler(environ)
     start_response(status, list(headers.items()))
 
     yield payload
