@@ -4,13 +4,13 @@ import random
 from framework.consts import DIR_STATIC
 
 
-def handle_index(_dgdfgdf):
-    gfdg = read_static("index.html")
+def handle_index(_environ):
+    payload = read_static("index.html")
     status = "200 OK"
     headers = {
         "Content-type": "text/html",
     }
-    return status, headers, gfdg
+    return status, headers, payload
 
 
 def handle_logo(_environ):
