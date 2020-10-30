@@ -4,13 +4,31 @@ import random
 from framework.consts import DIR_STATIC
 
 
-def handle_index(dgdfgdf):
+def handle_index(_dgdfgdf):
     gfdg = read_static("index.html")
-    return gfdg
+    status = "200 OK"
+    headers = {
+        "Content-type": "text/html",
+    }
+    return status, headers, gfdg
 
 
-def handle_logo(ddddqd):
-    ...
+def handle_logo(_environ):
+    logo = read_static("logo.png")
+    status = "200 OK"
+    headers = {
+        "Content-type": "img/png",
+    }
+    return status, headers, logo
+
+
+def handle_styles(_environ):
+    styles = read_static("styles.css")
+    status = "200 OK"
+    headers = {
+        "Content-type": "text/css",
+    }
+    return status, headers, styles
 
 
 def application(environ, start_response):
@@ -18,16 +36,11 @@ def application(environ, start_response):
 
     handlers = {
         "/": handle_index,
-        "/hgfhgf": handle_logo,
+        "/logo.png/": handle_logo,
+        "/styles/": handle_styles,
     }
     handler = handlers.get(url, generate_404)
-
-    status = "200 OK"
-    headers = {
-        "Content-type": "text/html",
-    }
-
-    payload = handler(environ)
+    status, headers, payload = handler(environ)
     start_response(status, list(headers.items()))
 
     yield payload
