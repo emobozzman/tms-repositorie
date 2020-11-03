@@ -1,64 +1,42 @@
-import mimetypes
-import random
-
-from framework.consts import DIR_STATIC
-
-
-def handle_index(_environ):
-    payload = read_static("index.html")
-    status = "200 OK"
-    headers = {
-        "Content-type": "text/html",
-    }
-    return status, headers, payload
+from framework.classes import RequestT
+from framework.handlers.generate_404 import generate_404
+from framework.handlers.index import handle_index
+from framework.handlers.logo import handle_logo
+from framework.handlers.styles import handle_styles
+from framework.handlers.system_handlers.error import handler_error
 
 
-def handle_logo(_environ):
-    logo = read_static("logo.png")
-    status = "200 OK"
-    headers = {
-        "Content-type": "img/png",
-    }
-    return status, headers, logo
+def make_error(_request):
+    1 / 0
 
 
-def handle_styles(_environ):
-    styles = read_static("styles.css")
-    status = "200 OK"
-    headers = {
-        "Content-type": "text/css",
-    }
-    return status, headers, styles
+handlers = {
+    "/": handle_index,
+    "/styles/": handle_styles,
+    "/logo.png/": handle_logo,
+    "/e": make_error,
+}
 
 
 def application(environ, start_response):
-    url = environ["PATH_INFO"]
+    try:
+        path = environ["PATH_INFO"]
 
-    handlers = {
-        "/": handle_index,
-        "/logo.png/": handle_logo,
-        "/styles/": handle_styles,
-    }
-    handler = handlers.get(url, generate_404)
-    status, headers, payload = handler(environ)
-    start_response(status, list(headers.items()))
+        handler_info = handlers.get(path, generate_404)
 
-    yield payload
+        request_headers = {
+            key[5:]: environ[key]
+            for key in filter(lambda key: key.startswith("HTTP_"), environ)
+        }
 
+        request = RequestT(
+            method=environ["REQUEST_METHOD"], headers=request_headers, path=path
+        )
 
-def read_static(file_name: str) -> bytes:
-    path = DIR_STATIC / file_name
+        response = handler_info(request)
 
-    with path.open("rb") as fp:
-        payload = fp.read()
+    except Exception:
+        response = handler_error()
 
-    return payload
-
-
-def generate_404(environ) -> bytes:
-    url = environ["PATH_INFO"]
-    pin = random.randint(1, 1000)
-
-    msg = f"Hello world! Your path: {url} not found. Pin: {pin}"
-
-    return msg.encode()
+    start_response(response.status, list(response.headers.items()))
+    yield response.payload
