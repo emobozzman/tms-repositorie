@@ -1,29 +1,46 @@
-import mimetypes
+from framework.classes import RequestT
+from framework.handlers.generate_404 import generate_404
+from framework.handlers.hello import handle_hello
+from framework.handlers.index import handle_index
+from framework.handlers.logo import handle_logo
+from framework.handlers.styles import handle_styles
+from framework.handlers.system_handlers.error import handler_error
 
-from framework.consts import DIR_STATIC
+
+def make_error(_request):
+    1 / 0
+
+
+handlers = {
+    "/": handle_index,
+    "/styles/": handle_styles,
+    "/logo.png/": handle_logo,
+    "/e": make_error,
+    "/hello": handle_hello,
+}
 
 
 def application(environ, start_response):
-    url = environ["PATH_INFO"]
+    try:
+        path = environ["PATH_INFO"]
 
-    file_names = {"/xxx/": "styles.css", "/logo.png/": "logo.png"}
-    file_name = file_names.get(url, "index.html")
-    status = "200 OK"
-    headers = {
-        "Content-type": mimetypes.guess_type(file_name)[0],
-    }
+        handler_info = handlers.get(path, generate_404)
 
-    payload = read_static(file_name)
+        request_headers = {
+            key[5:]: environ[key]
+            for key in filter(lambda key: key.startswith("HTTP_"), environ)
+        }
+        request = RequestT(
+            method=environ["REQUEST_METHOD"],
+            headers=request_headers,
+            path=path,
+            query=environ.get("QUERY_STRING"),
+        )
 
-    start_response(status, list(headers.items()))
+        response = handler_info(request)
 
-    yield payload
+    except Exception:
+        response = handler_error()
 
-
-def read_static(file_name: str) -> bytes:
-    path = DIR_STATIC / file_name
-
-    with path.open("rb") as fp:
-        payload = fp.read()
-
-    return payload
+    start_response(response.status, list(response.headers.items()))
+    yield response.payload
