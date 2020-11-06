@@ -1,5 +1,6 @@
 from framework.classes import RequestT
 from framework.handlers.generate_404 import generate_404
+from framework.handlers.hello import handle_hello
 from framework.handlers.index import handle_index
 from framework.handlers.logo import handle_logo
 from framework.handlers.styles import handle_styles
@@ -15,6 +16,7 @@ handlers = {
     "/styles/": handle_styles,
     "/logo.png/": handle_logo,
     "/e": make_error,
+    "/hello": handle_hello,
 }
 
 
@@ -28,9 +30,11 @@ def application(environ, start_response):
             key[5:]: environ[key]
             for key in filter(lambda key: key.startswith("HTTP_"), environ)
         }
-
         request = RequestT(
-            method=environ["REQUEST_METHOD"], headers=request_headers, path=path
+            method=environ["REQUEST_METHOD"],
+            headers=request_headers,
+            path=path,
+            query=environ.get("QUERY_STRING"),
         )
 
         response = handler_info(request)
